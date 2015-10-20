@@ -26,6 +26,29 @@ public class GenericDAO {
 		ServiceRegistry serviceRegistry = registry.buildServiceRegistry();
 		factory = configuration.buildSessionFactory(serviceRegistry);
 	}
+	
+	public List<?> findByQueryPaged(StringBuilder hql, Map<String, Object> ArgMap,int from,int recCount)
+			throws DAOException {
+		Session session = openSession();
+		try {
+			Query query = session.createQuery(hql.toString());
+			if (ArgMap != null && !ArgMap.isEmpty()) {
+				for (String x : ArgMap.keySet()) {
+					Object arg = ArgMap.get(x);
+					query.setParameter(x, arg);
+				}
+			}
+			query.setFirstResult(from);
+			query.setMaxResults(recCount);
+			List<?> list = query.list();
+			return list;
+		} catch (Exception e) {
+			throw new DAOException(e);
+		} finally {
+			closeSession(session);
+		}
+
+	}
 
 	public List<?> findByQuery(StringBuilder hql, Map<String, Object> ArgMap)
 			throws DAOException {
