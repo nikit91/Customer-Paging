@@ -1,0 +1,33 @@
+<form class="form-inline">
+	<div class="form-group">
+		<label class="col-sm-2 control-label">Enter Page Size:</label>
+		<div class="col-sm-10">
+			<input type="number" class="form-control" ng-model="pSize">
+		</div>
+	</div>
+	<button class="btn btn-success" ng-click="updateTable(pSize)">
+		<span class="glyphicon glyphicon-refresh"></span> Update Table
+	</button>
+</form>
+<div class="table-responsive">
+	<div ui-grid="gridOptions" ui-grid-exporter ui-grid-selection
+		class="grid"></div>
+</div>
+<form class="form-inline">
+	<button class="btn btn-default" ng-disabled = "prevPageDisFlag" ng-click="showPrev()">
+		<span class="glyphicon glyphicon-chevron-left"></span>
+	</button>
+	&nbsp;{{pNo}}/{{pageCount}}&nbsp;
+	<button class="btn btn-default" ng-disabled = "nextPageDisFlag" ng-click="showNext()">
+		<span class="glyphicon glyphicon-chevron-right"></span>
+	</button>
+	<div class="form-group">
+		<label class="col-md-4 control-label">Page to Jump:</label>
+		<div class="col-md-10">
+			<input type="number" class="form-control" ng-model="pNoIn">
+		</div>
+	</div>
+	<button class="btn btn-success" ng-click="gotoPage(pNoIn)">
+		<span class="glyphicon glyphicon-play-circle"></span> Go
+	</button>
+</form>
