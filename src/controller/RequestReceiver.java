@@ -1,14 +1,13 @@
 package controller;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
 
-import exception.DAOException;
 import service.CustomerService;
 import bean.Customer;
+import exception.DAOException;
 
 @RemoteProxy(name="RequestReceiver")
 public class RequestReceiver {
@@ -16,13 +15,10 @@ public class RequestReceiver {
 	static{
 		custService = new CustomerService();
 	}
-	@RemoteMethod
-	public List<String> getNames(){
-		List<String> names= new ArrayList<String>();
-		names.add("Nikit Srivastava");
-		names.add("Alexandra Srivastava");
-		return names;
-	}
+	/**
+	 * function to get all the customer records from db
+	 * @return
+	 */
 	@RemoteMethod
 	public List<Customer> getCustomers(){
 		List<Customer> cList=null;
@@ -33,6 +29,12 @@ public class RequestReceiver {
 		}
 		return cList;
 	}
+	/**
+	 * function to get paged customer records
+	 * @param from - page offset
+	 * @param pageSize - page size
+	 * @return List of Customer records
+	 */
 	@RemoteMethod
 	public List<Customer> getPagedCustomerData(int from,int pageSize){
 		List<Customer> cList=null;
@@ -43,6 +45,10 @@ public class RequestReceiver {
 		}
 		return cList;
 	}
+	/**
+	 * Method to number of customer records present in DB
+	 * @return
+	 */
 	@RemoteMethod
 	public Long getCustCount(){
 		Long custCount=null;
