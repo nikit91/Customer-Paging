@@ -1,5 +1,12 @@
 @CHARSET "ISO-8859-1";
 .grid {
-  width: 500px;
-  height: 250px;
+  width: 700px;
+  height: 300px;
+}
+.centerDiv {
+ 	margin-top: 10%;
+ 	margin-left: 20%;
+}
+.alert{
+	width: 700px
 }

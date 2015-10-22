@@ -1,17 +1,19 @@
-var app = angular.module('myApp', [ 'ngTouch', 'ui.grid', 'ui.grid.exporter' ]);
+var app = angular.module('myApp', [ 'ngTouch', 'ui.grid', 'ui.grid.exporter',
+		'ngAnimate', 'ui.bootstrap' ]);
 
 app.controller('customersCtrl', [
 		'$scope',
 		'$http',
 		'$interval',
 		'$q',
-		function($scope, $http, $interval, $q) {
+		'$timeout',
+		function($scope, $http, $interval, $q, $timeout) {
 
 			$scope.pNo = 1;
 			$scope.pSize = 3;
 			$scope.pageCount = 0;
-			$scope.nextPageDisFlag = true;
-			$scope.prevPageDisFlag = true;
+			$scope.totalItems = 0;
+			$scope.showErr = false;
 
 			var fakeI18n = function(title) {
 				var deferred = $q.defer();
@@ -19,6 +21,15 @@ app.controller('customersCtrl', [
 					deferred.resolve('col: ' + title);
 				}, 1000, 1);
 				return deferred.promise;
+			};
+
+			var resetErrPanel = function() {
+				$scope.showErr = false;
+				$scope.errMsg = "";
+			};
+			var putErrMsg = function(msg) {
+				$scope.showErr = true;
+				$scope.errMsg = msg;
 			};
 
 			$scope.gridOptions = {
@@ -41,15 +52,6 @@ app.controller('customersCtrl', [
 				var pageNumber = arg.pageNumber;
 				var pageSize = arg.pageSize;
 				$scope.$apply(function() {
-
-					if (pageNumber < $scope.pageCount)
-						$scope.nextPageDisFlag = false;
-					else
-						$scope.nextPageDisFlag = true;
-					if (pageNumber > 1)
-						$scope.prevPageDisFlag = false;
-					else
-						$scope.prevPageDisFlag = true;
 					$scope.gridOptions.data = data
 				});
 
@@ -68,36 +70,35 @@ app.controller('customersCtrl', [
 						callMetaData);
 			};
 			var setPageCountCB = function(data) {
-				$scope.pageCount = Math.ceil(data/$scope.pSize);
+				$timeout(function() {
+					$scope.totalItems = data;
+					$scope.pageCount = Math.ceil(data / $scope.pSize);
+				});
 			};
 			var setPageCount = function() {
 				var callMetaData = {
-						async: false,
-						callback: setPageCountCB
+					async : false,
+					callback : setPageCountCB
 				}
 				RequestReceiver.getCustCount(callMetaData);
 			}
 			$scope.updateTable = function(pSize) {
 				if (pSize > 0) {
+					resetErrPanel();
 					$scope.pSize = pSize;
 					$scope.pNo = 1;
 					setPageCount();
 					getPagedData($scope.pNo, $scope.pSize);
-				}
+				} else
+					putErrMsg("Invalid Page Size Entered.");
 			};
 			$scope.updateTable($scope.pSize);
-
-			$scope.showNext = function() {
-				$scope.pNo += 1;
-				getPagedData($scope.pNo, $scope.pSize);
-			};
-			$scope.showPrev = function() {
-				$scope.pNo -= 1;
-				getPagedData($scope.pNo, $scope.pSize);
-			};
 			$scope.gotoPage = function(pNo) {
 				if (pNo > 0 && pNo <= $scope.pageCount) {
-					getPagedData(pNo, $scope.pSize);
-				}
+						$scope.pNo = pNo;
+						resetErrPanel();
+						getPagedData($scope.pNo, $scope.pSize);
+				} else
+					putErrMsg("Invalid Page Number Entered.");
 			};
 		} ]);
